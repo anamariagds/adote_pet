@@ -3,6 +3,10 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.messages import constants
+from django.contrib.auth import authenticate
+
+
+
 
 def cadastro(request):
     if request.method == "GET":
@@ -15,9 +19,11 @@ def cadastro(request):
         print(nome, email, senha, confirmar_senha)
 
         if len(nome.strip()) == 0 or len(email.strip()) == 0 or len(senha.strip()) == 0 or len(confirmar_senha.strip()) == 0:
+            messages.add_message(request, constants.ERROR, 'Preencha todos os campos.')
             return render(request, 'cadastro.html')
             
         if senha!= confirmar_senha:
+            messages.add_message(request, constants.ERROR, 'As senhas devem ser iguais.')
             return render(request, 'cadastro.html')
         try:
             user = User.objects.create_user(
@@ -25,11 +31,20 @@ def cadastro(request):
                 email=email,
                 password=senha
             )
-            #Aqui manda mensagem de exito
+            messages.add_message(request, constants.SUCCESS, 'Cadastro feito com sucesso.')
             return render(request, 'cadastro.html')
         except:
-            #mensagem de erro
+            messages.add_message(request, constants.ERROR, 'Erro interno do sistemas.')
             return render(request, 'cadastro.html')
+            
 
 def login(request):
-    pass
+    if request.method == "GET":
+        return render(request, 'login.html')
+    elif request.method == "POST":
+        nome = request.POST.get('nome')
+        senha = request.POST.get('senha')
+        user = authenticate(username=nome,
+                            password=senha)
+        print(user)
+        return HttpResponse("teste1")
