@@ -6,11 +6,8 @@ from django.contrib.messages import constants
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
 
-
-
-
 def cadastro(request):
-    if request.user .is_autheticated:
+    if request.user.is_authenticated:
         return redirect('/divulgar/novo_pet')
     if request.method == "GET":
         return render(request, 'cadastro.html')
@@ -41,8 +38,8 @@ def cadastro(request):
             return render(request, 'cadastro.html')
             
 
-def login(request):
-    if request.user .is_autheticated:
+def logar(request):
+    if request.user.is_authenticated:
         return redirect('/divulgar/novo_pet')
     if request.method == "GET":
         return render(request, 'login.html')
