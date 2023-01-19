@@ -3,12 +3,15 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.messages import constants
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
+from django.shortcuts import redirect
 
 
 
 
 def cadastro(request):
+    if request.user .is_autheticated:
+        return redirect('/divulgar/novo_pet')
     if request.method == "GET":
         return render(request, 'cadastro.html')
     elif request.method == "POST":
@@ -39,6 +42,8 @@ def cadastro(request):
             
 
 def login(request):
+    if request.user .is_autheticated:
+        return redirect('/divulgar/novo_pet')
     if request.method == "GET":
         return render(request, 'login.html')
     elif request.method == "POST":
@@ -46,5 +51,10 @@ def login(request):
         senha = request.POST.get('senha')
         user = authenticate(username=nome,
                             password=senha)
-        print(user)
-        return HttpResponse("teste1")
+        
+        if user is not None:
+            login(request, user)
+            return redirect('/divulgar/novo_pet')
+        else:
+            messages.add_message(request, constants.ERROR, 'Login ou senha invalido.')
+            return render(request, 'login.html')
